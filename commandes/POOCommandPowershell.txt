@@ -1,0 +1,2 @@
+Afficher la taille des disques : get-wmiobject -class win32_logicaldisk | format-table -property DeviceID,FreeSpace,Size,VolumeName
+Afficher la mémoire ram : Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity
