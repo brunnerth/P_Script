@@ -1,0 +1,10 @@
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\bin\Debug\TestChart.exe.config
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\bin\Debug\TestChart.exe
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\bin\Debug\TestChart.pdb
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.csprojAssemblyReference.cache
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.Form1.resources
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.Properties.Resources.resources
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.csproj.GenerateResource.cache
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.csproj.CoreCompileInputs.cache
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.exe
+E:\H-LastSave\01-projets\P_Script\TestChart\TestChart\obj\Debug\TestChart.pdb

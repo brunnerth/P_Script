@@ -24,10 +24,5 @@
     de89b5405f5b580e400000004e2f571708bfaf30825dcb6ae1046b71f6ff26fe5c77788adeaebb2b9a3a99560280f66e77118327d4d7556c4c2259ef3d66ff7e5671a7446ded6dd928d6a6b5
     .Etml-44
 #>
-$User = "Test";
-$password = ".Etml-44" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString;
-$password.GetType().FullName;
-$securestring = $password | ConvertTo-SecureString;
-$UserCred = New-Object System.Management.Automation.PSCredential ($User, $securestring);
-$Password2 = $UserCred.GetNetworkCredential().password;
-$Password2;
+$password = ".Etml-44" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString -Key ([System.Text.Encoding]::ASCII.GetBytes("Kaguya-samawaKokurasetaiTensaiS2"));
+$password;
