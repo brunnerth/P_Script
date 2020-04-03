@@ -15,41 +15,40 @@ namespace TestChart
     {
         public Form1()
         {
+            int maxValue = 16000;
             InitializeComponent();
-            int x1 = 1;
-            int x2 = 56;
-            int x3 = 2;
-            int x4 = 1;
-            int x5 = 45;
-            int x6 = 63;
-            int x7 = 15;
-            int x8 = 25;
+            this.chart1.Series["Ram"].Color = System.Drawing.Color.Red;
+            this.chart1.Series["Ram"].BorderColor = System.Drawing.Color.Red;
+            this.chart1.Series["Ram"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            this.chart1.ChartAreas[0].AxisX.MajorGrid.LineWidth = 0;
+            this.chart1.ChartAreas[0].AxisX.LabelStyle.Enabled = false;
+            this.chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
+            this.chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            this.chart1.ChartAreas[0].AxisX.Minimum = 1;
+            this.chart1.ChartAreas[0].AxisY.Minimum = 0;
+            this.chart1.ChartAreas[0].AxisY.Maximum = maxValue;
+            this.chart1.ChartAreas[0].AxisY.Interval = maxValue/8;
             var chart = chart1.ChartAreas[0];
-            chart.AxisX.IntervalType = DateTimeIntervalType.Number;
             chart.AxisX.LabelStyle.Format = "";
             chart.AxisY.LabelStyle.Format = "";
             chart.AxisY.LabelStyle.IsEndLabelVisible = true;
-            chart.AxisX.Maximum = 8;
-            chart.AxisX.Minimum = 1;
-            chart.AxisY.Minimum = 0;
-            chart.AxisY.Maximum = 70;
-            chart.AxisX.Interval = 1;
-            chart.AxisY.Interval = 5;
-            chart1.Series["Ram"].Points.AddXY(1, x1);
-            chart1.Series["Ram"].Points.AddXY(2, x2);
-            chart1.Series["Ram"].Points.AddXY(3, x3);
-            chart1.Series["Ram"].Points.AddXY(4, x4);
-            chart1.Series["Ram"].Points.AddXY(5, x5);
-            chart1.Series["Ram"].Points.AddXY(6, x6);
-            chart1.Series["Ram"].Points.AddXY(7, x7);
-            chart1.Series["Ram"].Points.AddXY(8, x8);
+            List<int> values = new List<int>();
+            Random int2 = new Random();
+            for (int x = 0; x<8;x++)
+            {
+
+                UpdateChart(int2.Next(1, 16000), x);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
-
+        private void UpdateChart(int value, int compteur)
+        {
+            chart1.Series["Ram"].Points.AddXY(compteur, value);
+        }
         private void Chart1_Click(object sender, EventArgs e)
         {
 

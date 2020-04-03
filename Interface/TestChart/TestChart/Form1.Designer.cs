@@ -37,22 +37,22 @@
             // 
             // chart1
             // 
+            this.chart1.BorderlineColor = System.Drawing.Color.Red;
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(189, 41);
+            this.chart1.Location = new System.Drawing.Point(202, 57);
             this.chart1.Name = "chart1";
+            this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
-            series1.Name = "Series1";
+            series1.Name = "Ram";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(300, 300);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             this.chart1.Click += new System.EventHandler(this.Chart1_Click);
-            this.chart1.Series.Add("Ram");
-            this.chart1.Series["Ram"].Color = System.Drawing.Color.Red;
-            this.chart1.Series["Ram"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             // 
             // Form1
             // 
