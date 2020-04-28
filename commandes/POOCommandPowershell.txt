@@ -1,2 +1,7 @@
 Afficher la taille des disques : get-wmiobject -class win32_logicaldisk | format-table -property DeviceID,FreeSpace,Size,VolumeName
 Afficher la mémoire ram : Get-WmiObject win32_physicalmemory | Format-Table Manufacturer,Banklabel,Configuredclockspeed,Devicelocator,Capacity
+Afficher carte graphique :  gwmi -Class Win32_VideoController | Format-List name
+Afficher utilisateur par ordre de création : Get-LocalUser | Where-Object {$_.LastLogon -ne $null} | Select Name , LastLogon , Description |Sort-Object -Property @{Expression = {$_.LastLogon}} -Descending
+Afficher le nom du pc : Get-WmiObject -class Win32_Bios | select PSCOmputerName
+Afficher les status : Get-Service | Where-Object{$_.Status -eq "Running"}|Format-Table Name , Status
+Afficher les programmes qui se lancent au démarrage de l'ordi : Get-CimInstance Win32_StartupCommand | Select-Object Name | Format-List

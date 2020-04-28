@@ -1,5 +1,23 @@
 ﻿Add-Type -AssemblyName System.Windows.Forms.DataVisualization
 
+function GetTotalRam{
+    $tabBarette = Get-WmiObject win32_physicalmemory;
+    $totalRam = 0;
+    for($i =0; $i-lt $tabBarette.Length;$i++)
+    {
+        $totalRam +=  $tabBarette[$i].Capacity;
+    }
+    return $totalRam;
+}
+function GetUsedRam{
+    $os = Get-Ciminstance Win32_OperatingSystem;
+    $ramTotal = GetTotalRam;
+    $ramTotal /= 1024;
+    $ramFree = $os.FreePhysicalMemory;
+    $ramUsed = ($ramTotal - $ramFree)/ 1048576;
+    return $ramUsed;
+}
+
 $form = New-Object Windows.Forms.Form
 
 $form.MaximizeBox = $False
@@ -56,38 +74,27 @@ $MemoryUsageChart1.ChartAreas[0].AxisX.LabelStyle.Format = "";
 $MemoryUsageChart1.ChartAreas[0].AxisY.LabelStyle.Format = "";
 $MemoryUsageChart1.ChartAreas[0].AxisY.LabelStyle.IsEndLabelVisible = $true;
 
-$MemoryUsageChart1.Series["Ram"].Points.AddXY(1,12000);
-$MemoryUsageChart1.Series["Ram"].Points.AddXY(2,2000);
-$MemoryUsageChart1.Series["Ram"].Points.AddXY(3,3000);
-$MemoryUsageChart1.Series["Ram"].Points.AddXY(4,6000);
+#$MemoryUsageChart1.Series["Ram"].Points.AddXY(1,12000);
+#$MemoryUsageChart1.Series["Ram"].Points.AddXY(2,2000);
+#$MemoryUsageChart1.Series["Ram"].Points.AddXY(3,3000);
+#$MemoryUsageChart1.Series["Ram"].Points.AddXY(4,6000);
 
-$form.Controls.Add($MemoryUsageChart1);
+function ActualiseGraphic{
+    $i = 1;
+    while($true)
+    {
+        $ramUsed = GetUsedRam;
+        $MemoryUsageChart1.Series["Ram"].Points.AddXY($i,$ramUsed);
+        $form.Controls.Add($MemoryUsageChart1);
+        Write-Host "Point : $i -> $ramUsed"
+        $i++;
+        Start-Sleep -Seconds 1.0;
+    }
+}
+$runForm = {
+    $form.ShowDialog();
+}
+Start-Job $runForm
+Get-Job
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-$form.ShowDialog();
+Write-Host("asd");
