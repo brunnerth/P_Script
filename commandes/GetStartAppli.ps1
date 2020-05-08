@@ -70,7 +70,7 @@ function GetEnableOrDisable($startupapplis){
         {
             $itemProperty = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $startupappli[$i].Name;
             $name = $startupapplis[$i].Name;
-            if($itemProperty.$name[0] -eq 2)
+            if($itemProperty.$name[0] -eq -or $itemProperty.$name[0] -eq 6)
             {
                 $tableEnable += ,@{Name=$startupapplis[$i].Name; Enable=$true}
             }
