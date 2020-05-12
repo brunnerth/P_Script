@@ -4,7 +4,7 @@
 	ETML
 	Name: 	GetStartAppli.ps1
     Author:	Brunner Théo
-    Date:	07.04.2020
+    Date:	08.05.2020
  	*****************************************************************************
     Modifications
  	Date  : -
@@ -12,58 +12,78 @@
  	Reason: -
  	*****************************************************************************
 .SYNOPSIS
-    
+    Affiche les infos d'utilisateur du processeurs
  	
 .DESCRIPTION
-    
+    Affiche les infos d'utilisateur du processeurs, pourcentage d'utilisation, température et pourcentage d'utilisation de la frécence
   	
 .EXAMPLE
     
 #>
+Add-Type -Path "$PSScriptRoot\OpenHardwareMonitor\OpenHardwareMonitorLib.dll";
+$Comp = New-Object -TypeName OpenHardwareMonitor.Hardware.Computer;
 <#
-# Retrourne la vitesse du processeur
+# Retrourne les infos d'utilisatation du processeur
 #
 # @param -
-# @retrun Retourne la vitesse du processeur
+# @retrun Retourne les infos d'utilisatation du processeur
 #>
-function GetClockSpeed(){
-    $Processor = Get-WmiObject -class Win32_Processor;
-    return $Processor.CurrentClockSpeed ;
-}
-<#
-# Retrourne la moyenne utilisée du processeur
-#
-# @param -
-# @retrun Retourne la moyenne utilisée du processeur
-#>
-function GetCPUsed(){
-    Get-WmiObject win32_processor |Measure-Object -property LoadPercentage -Average | Select Average;
-}
-CLS
+function GetInfCpu(){
+    $Comp.Open();
  
-Add-Type -Path "OpenHardwareMonitorLib.dll"
-$Comp = New-Object -TypeName OpenHardwareMonitor.Hardware.Computer
- 
-$Comp.Open()
- 
-$Comp.CPUEnabled = $true
- 
-ForEach ($HW in $Comp.Hardware) {
- 
-$HW.Update()
-    $hw.HardwareType.ToString() + ' - ' + $hw.name.ToString()
- 
-    If ( $hw.HardwareType -eq "CPU"){
-        ForEach ($Sensor in $HW.Sensors) {
- 
-        If ($Sensor.SensorType -eq "Temperature"){
-             
-            $Sensor.Name + ' - Temp : ' + $Sensor.Value.ToString() + ' C - Min. : ' + $Sensor.Min.ToString() + ' C - Max : ' + $Sensor.Max.ToString() + ' C'
+    $Comp.CPUEnabled = $true;
+    $tabInfosUsed= @();
+    $nbCoeur = 0;
+    $totalSpeed = 0;
+    $totalSpeedMax = 0;
+    $moyenneSpeed = 0;
+    $moyenneSpeedMax = 0;
+    ForEach ($HW in $Comp.Hardware) 
+    {
+        $HW.Update();
+        If ( $hw.HardwareType -eq "CPU")
+        {
+            ForEach ($Sensor in $HW.Sensors) 
+            {
+                If ($Sensor.SensorType -eq "Temperature" -and $Sensor.Name -eq "CPU Package")
+                {
+                    $tabInfosUsed += ,@{Name=$Sensor.Name; Value=$Sensor.Value.ToString()}; 
+                }
+                elseif($Sensor.SensorType -eq "Load" -and $Sensor.Name -eq "CPU Total")
+                {
+                    $tabInfosUsed += ,@{Name=$Sensor.Name; Value=$Sensor.Value.ToString()};
+                }
+                elseif($Sensor.SensorType -eq "Clock" -and !($Sensor.Name -eq "Bus Speed"))
+                {
+                    $totalSpeed += $Sensor.Value.ToString();
+                    $totalSpeedMax += $Sensor.Max.ToString();
+                    $nbCoeur++;
+                }
+            }
         }
-      }
     }
-    
-    # $hw.Sensors
-    $hw.SubHardware
+    $moyenneSpeed = $totalSpeed / $nbCoeur;
+    $moyenneSpeed /=1000;
+    $moyenneSpeedMax = $totalSpeedMax / $nbCoeur;
+    $moyenneSpeedMax /= 1000; 
+    $pourcentSpeed = $moyenneSpeed* 100 / $moyenneSpeedMax;
+    $tabInfosUsed += ,@{Name="CPU Speed"; Value=$pourcentSpeed};
+    $Comp.Close();
+    return $tabInfosUsed; 
 }
-$Comp.Close()
+$tabInf = GetInfCpu;
+for($i = 0; $i -lt $tabInf.Count; $i++)
+{
+    if($tabInf[$i].Name -eq "CPU Package")
+    {
+        "Température du processeur " + $tabInf[$i].Value +  "°C";
+    }
+    elseif($tabInf[$i].Name -eq "CPU Total")
+    {
+        "Pourcentage du processeur utilisés " + $tabInf[$i].Value + "%";
+    }
+    elseif($tabInf[$i].Name -eq "CPU Speed")
+    {
+        "Pourcentage de al vitesse du processeur utilisés " + $tabInf[$i].Value + "%";
+    }
+}
