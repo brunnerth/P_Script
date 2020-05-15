@@ -32,7 +32,7 @@
     AdobeGCInvoker-1.0 Disable
     RtkAudUService Enable
 #>
- 
+$locationHKU = "";
 <#
 # Méthode permetant de récupérer les applications au démarrage
 #
@@ -51,12 +51,20 @@ function GetStartAppli(){
 #>
 function GetEnableOrDisable($startupapplis){
     $tableEnable= @();
-    for($i = 0; $i -lt $startupappli.Count;$i++)
+    for($i = 0; $i -lt $startupapplis.Count; $i++)
     {
-        if($startupappli[$i].Location -eq "HKU\S-1-5-21-2014756496-2923043445-477522502-1001\SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
+        if($startupapplis[$i].Location -like "*S-1-5-21*")
+        {
+            $locationHKU = $startupapplis[$i].Location;
+            break;
+        }
+    }
+    for($i = 0; $i -lt $startupapplis.Count;$i++)
+    {
+        if($startupapplis[$i].Location -eq $locationHKU)
         {
             $itemProperty = Get-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $startupappli[$i].Name;
-            $name = $startupappli[$i].Name;
+            $name = $startupapplis[$i].Name;
             if($itemProperty.$name[0] -eq 2 -or $itemProperty.$name[0] -eq 6)
             {
                 $tableEnable += ,@{Name=$startupapplis[$i].Name; Enable=$true}
@@ -66,11 +74,11 @@ function GetEnableOrDisable($startupapplis){
                 $tableEnable += ,@{Name=$startupapplis[$i].Name; Enable=$false}
             }
         }
-        elseif($startupappli[$i].Location -eq "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
+        elseif($startupapplis[$i].Location -eq "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
         {
-            $itemProperty = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $startupappli[$i].Name;
+            $itemProperty = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $startupapplis[$i].Name;
             $name = $startupapplis[$i].Name;
-            if($itemProperty.$name[0] -eq -or $itemProperty.$name[0] -eq 6)
+            if($itemProperty.$name[0] -eq 2 -or $itemProperty.$name[0] -eq 6)
             {
                 $tableEnable += ,@{Name=$startupapplis[$i].Name; Enable=$true}
             }
@@ -98,7 +106,16 @@ function Enable(){
     $location, 
     $name
     )
-    if($location -eq "HKU\S-1-5-21-2014756496-2923043445-477522502-1001\SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
+    $startupapplis = GetStartAppli;
+    for($i = 0; $i -lt $startupappli.Count; $i++)
+    {
+        if($startupapplis[$i].Location -like "*S-1-5-21*")
+        {
+            $locationHKU = $startupapplis[$i].Location;
+            break;
+        }
+    }
+    if($location -eq $locationHKU)
     {
         Set-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $name -Value ([byte[]](0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00))
     }
@@ -126,7 +143,16 @@ function Disable(){
     $location, 
     $name
     )
-    if($location -eq "HKU\S-1-5-21-2014756496-2923043445-477522502-1001\SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
+    $startupapplis = GetStartAppli;
+    for($i = 0; $i -lt $startupappli.Count; $i++)
+    {
+        if($startupapplis[$i].Location -like "*S-1-5-21*")
+        {
+            $locationHKU = $startupapplis[$i].Location;
+            break;
+        }
+    }
+    if($location -eq $locationHKU)
     {
         Set-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run -Name $name -Value ([byte[]](0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00))
     }
@@ -136,6 +162,9 @@ function Disable(){
     }
 }
 $startupappli = GetStartAppli;
+
+$startupappli.Name;
+
 $enableOrDisable = GetEnableOrDisable ($startupappli);
 for($i = 0; $i -lt $startupappli.Count;$i++)
 {
@@ -143,7 +172,8 @@ for($i = 0; $i -lt $startupappli.Count;$i++)
     {
         Write-Host $enableOrDisable[$i].Name Enable;
     }
-    else{
+    else
+    {
         Write-Host $enableOrDisable[$i].Name Disable;
     }
 }
